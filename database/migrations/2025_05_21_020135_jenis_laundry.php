@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('harga');
             $table->string('waktu');
             $table->string('berat');
+            $table->string('deskripsi');
+            $table->string('foto');
             $table->timestamps();
         });
     }

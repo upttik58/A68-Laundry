@@ -53,6 +53,12 @@
     <script src="{{ asset('assets_customer/libraries/glide/glide.min.js') }}"></script>
     <script src="{{ asset('assets_customer/libraries/aos/aos.js') }}"></script>
     <script src="{{ asset('assets_customer/js/scripts.js') }}"></script>
+
+    <!-- jQuery -->
+    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+bYkB54Z1mhbpo+bSWTnYJKhLkq1ieUckA+gCTc=" crossorigin="anonymous"></script> --}}
+
+    {{-- @stack('scripts') --}}
 </body>
 
 </html>

@@ -196,7 +196,7 @@
                                     `<button type="button" class="btn btn-sm btn-success" onclick="bayar('${row.id}')">Bayar</button>`;
                             } else if (row.pembayaran === 'Transfer') {
                                 bayarBtn =
-                                    `<button type="button" class="btn btn-sm btn-success" onclick="bayarTransfer('${row.id}')">Bayar</button>`;
+                                    `<button type="button" class="btn btn-sm btn-success" onclick="bayarTransfer('${row.snap_token}')">Bayar</button>`;
                             }
                             return `<button type="button" class="btn btn-sm btn-info" onclick="editData('${row.id}')">Edit</button>
                                     <button type="button" class="btn btn-sm btn-danger" onclick="hapusData('${row.id}')">Hapus</button>
@@ -230,15 +230,25 @@
         }
 
         function bayarTransfer(id) {
-            // Ambil data dari DataTable instance global
-            let table = window.orderOfflineLaundryTable;
-            let data = table.data().toArray().find(row => String(row.id) === String(id));
-            console.log(data);
-
-            if (data) {
-                $('#id').val(data.id);
-                $('#bayarOrderOffline').modal('show');
-            }
+            // SnapToken acquired from previous step
+            snap.pay(id, {
+                // Optional
+                onSuccess: function(result) {
+                    /* You may add your own js here, this is just example */
+                    // document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+                    window.location.href = 'offline/bayar/success/'+id;
+                },
+                // Optional
+                onPending: function(result) {
+                    /* You may add your own js here, this is just example */
+                    document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+                },
+                // Optional
+                onError: function(result) {
+                    /* You may add your own js here, this is just example */
+                    document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+                }
+            });
         }
 
         function bayar(id) {

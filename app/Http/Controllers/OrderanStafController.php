@@ -7,6 +7,8 @@ use App\Models\Orderan;
 use App\Models\OrderanDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Midtrans\Config;
+use Midtrans\Snap;
 
 class OrderanStafController extends Controller
 {
@@ -33,6 +35,7 @@ class OrderanStafController extends Controller
             DB::beginTransaction();
 
             $orderan = Orderan::create([
+                'nomor_pesanan' => substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 8) . '_' . time(),
                 'jenis_laundry' => $validatedData['jenis_laundry'],
                 'berat'         => $validatedData['berat'],
                 'harga'         => $validatedData['harga'],
@@ -47,11 +50,40 @@ class OrderanStafController extends Controller
                 'alamat'     => $validatedData['alamat'],
             ]);
 
+            if ($validatedData['pembayaran'] == 'Transfer') {
+
+                // Set your Merchant Server Key
+                Config::$serverKey = config('midtrans.serverKey');
+                // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+                Config::$isProduction = false;
+                // Set sanitization on (default)
+                Config::$isSanitized = true;
+                // Set 3DS transaction for credit card to true
+                Config::$is3ds = true;
+
+                $params = array(
+                    'transaction_details' => array(
+                        'order_id' => rand(),
+                        'gross_amount' => $validatedData['harga'],
+                    ),
+                    'customer_details' => array(
+                        'first_name' => $validatedData['nama'],
+                        'phone'      => $validatedData['no_hp'],
+                        'address'    => $validatedData['alamat'],
+                    )
+                );
+
+                $snapToken = Snap::getSnapToken($params);
+
+                $orderan->update([
+                    'snap_token' => $snapToken,
+                ]);
+            }
+
             DB::commit();
 
             return redirect()->back()->with('success', 'Orderan offline berhasil ditambahkan.');
         } catch (\Exception $e) {
-            dd($e);
             DB::rollBack();
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menambahkan orderan offline: ' . $e->getMessage());
         }
@@ -91,11 +123,12 @@ class OrderanStafController extends Controller
 
             $orderan = Orderan::findOrFail($id);
             $orderan->update([
+                'nomor_pesanan' => substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 8) . '_' . time(),
                 'jenis_laundry' => $validatedData['jenis_laundry'],
                 'berat'         => $validatedData['berat'],
                 'harga'         => $validatedData['harga'],
                 'pembayaran'    => $validatedData['pembayaran'],
-                'berat'         => 'Belum Lunas'
+                'status'        => 'Belum Lunas' 
             ]);
 
             OrderanDetail::where('orderan_id', $id)->update([
@@ -103,6 +136,36 @@ class OrderanStafController extends Controller
                 'no_hp'      => $validatedData['no_hp'],
                 'alamat'     => $validatedData['alamat'],
             ]);
+            
+            if($validatedData['pembayaran'] == 'Transfer'){
+
+                // Set your Merchant Server Key
+                Config::$serverKey = config('midtrans.serverKey');
+                // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+                Config::$isProduction = false;
+                // Set sanitization on (default)
+                Config::$isSanitized = true;
+                // Set 3DS transaction for credit card to true
+                Config::$is3ds = true;
+
+                $params = array(
+                    'transaction_details' => array(
+                        'order_id' => rand(),
+                        'gross_amount' => $validatedData['harga'],
+                    ),
+                    'customer_details' => array(
+                        'first_name' => $validatedData['nama'],
+                        'phone'      => $validatedData['no_hp'],
+                        'address'    => $validatedData['alamat'],
+                    )
+                );
+
+                $snapToken = Snap::getSnapToken($params);
+
+                $orderan->update([
+                    'snap_token' => $snapToken,
+                ]);
+            }
 
             DB::commit();
 
@@ -128,6 +191,18 @@ class OrderanStafController extends Controller
                 'success' => false,
                 'message' => 'Data gagal dihapus: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function bayarOfflineSuccess($id)
+    {
+        try {
+            $orderan = Orderan::where('snap_token', $id)->first();
+            $orderan->update(['status' => 'Sudah Lunas']);
+
+            return redirect('/offline')->with('success', 'Pembayaran berhasil dilakukan.');
+        } catch (\Exception $e) {
+            return redirect('/offline')->with('error', 'Terjadi kesalahan saat memproses pembayaran: ' . $e->getMessage());
         }
     }
 }

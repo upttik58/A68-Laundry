@@ -41,17 +41,25 @@ Route::post('/offline', [OrderanStafController::class, 'storeOffline']);
 Route::post('/offline/{id}', [OrderanStafController::class, 'destroyOffline']);
 Route::post('/offline/edit/{id}', [OrderanStafController::class, 'updateOffline']);
 Route::post('/offline/bayar/{id}', [OrderanStafController::class, 'bayarOffline']);
+Route::get('/offline/bayar/success/{id}', [OrderanStafController::class, 'bayarOfflineSuccess']);
 
 Route::get('/online', [OrderanStafController::class, 'online']);
 
 
 // CUSTOMER 
 // ===========================================================================
+Route::get('/', [CustomerController::class, 'index']);
+
+// register
+Route::get('/registerCustomer', [LoginController::class, 'registerCustomer']);
+Route::post('/registerCustomerStore', [LoginController::class, 'registerCustomerStore']);
+
 // login
 Route::get('/loginCustomer', [LoginController::class, 'loginCustomer']);
+Route::post('/loginCustomerAuth', [LoginController::class, 'loginCustomerAuth']);
 
-Route::get('/', [CustomerController::class, 'index']);
-Route::get('/cekStatusCucian', [CustomerController::class, 'statusCucian']);
+// status cucian
+Route::post('/cekStatusCucian', [CustomerController::class, 'cekStatusCucian']);
 
 
 // MEMBER 

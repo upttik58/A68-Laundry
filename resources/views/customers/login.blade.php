@@ -28,6 +28,29 @@
             <div class="row gy-5 gx-sm-5">
                 <div class="col-12 col-xl-5 pt-4">
                     <div class="mx-auto max-w-2xl">
+                        @if (session('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
+                        @if (session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
+                        @if ($errors->any())
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                @foreach ($errors->all() as $error)
+                                    {{ $error }}
+                                @endforeach
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
                         <h2 class="m-0 text-primary-emphasis text-base leading-7 fw-semibold">
                             Login/Register
                         </h2>
@@ -37,7 +60,8 @@
                     </div>
 
                     <div class="mx-auto max-w-2xl mt-6">
-                        <form class="row g-4 needs-validation" id="myForm" novalidate>
+                        <form class="row g-4 needs-validation" action="/loginCustomerAuth" method="POST" novalidate>
+                            @csrf
                             <div class="mb-2">
                                 <label for="username" class="form-label">
                                     Username
@@ -61,11 +85,11 @@
 
                             <div class="col-12 text-center">
                                 <p class="m-0 text-body-emphasis tracking-tight">
-                                    Belum punya akun? <a href=""
+                                    Belum punya akun? <a href="/registerCustomer"
                                         class="text-primary-emphasis fw-semibold">Register</a>
                                 </p>
-                                <button type="submit" class="btn btn-lg btn-primary text-white text-sm fw-semibold mt-3"
-                                    id="loginButton">
+                                <button type="submit"
+                                    class="btn btn-lg btn-primary text-white text-sm fw-semibold mt-3" id="loginButton">
                                     Login
                                 </button>
                             </div>

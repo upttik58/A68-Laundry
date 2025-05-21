@@ -16,24 +16,27 @@
         <div>
             <div
                 class="row row-cols-1 row-cols-xl-3 gy-5 gx-xl-4 mt-1 justify-content-center justify-content-xl-between">
-                <div class="col pt-5 pt-xl-4">
-                    <div class="max-w-xl mx-auto mx-xl-0" data-aos-delay="0" data-aos="fade" data-aos-duration="1000">
-                        <div class="ratio" style="--bs-aspect-ratio: 66.66%;">
-                            <img src="{{ asset('assets_customer/img/bg/bg3.jpg') }}" class="object-fit-cover rounded-3"
-                                alt="Service image" loading="lazy">
+                @foreach ($paketLaundry as $pl)
+                    <div class="col pt-5 pt-xl-4">
+                        <div class="max-w-xl mx-auto mx-xl-0" data-aos-delay="0" data-aos="fade"
+                            data-aos-duration="1000">
+                            <div class="ratio" style="--bs-aspect-ratio: 66.66%;">
+                                <img src="/images/{{ $pl->jenisLaundry->foto }}" class="object-fit-cover rounded-3"
+                                    alt="Service image" loading="lazy">
+                            </div>
+                            <h3 class="m-0 mt-4 text-body-emphasis text-lg leading-6 fw-semibold">
+                                {{ $pl->jenisLaundry->nama }}
+                            </h3>
+                            <h3 class="m-0 mt-1 text-primary-emphasis text-2xl leading-6 fw-bold">
+                                Rp. {{ $pl->harga }} / {{ $pl->berat }}KG
+                            </h3>
+                            <a href="javascript:;" class="btn btn-lg btn-primary text-white text-sm fw-semibold mt-3"
+                                data-aos-delay="200" data-aos="fade" data-aos-duration="3000">
+                                Daftar Member
+                            </a>
                         </div>
-                        <h3 class="m-0 mt-4 text-body-emphasis text-lg leading-6 fw-semibold">
-                            Cuci Setrika
-                        </h3>
-                        <h3 class="m-0 mt-1 text-primary-emphasis text-2xl leading-6 fw-bold">
-                            Rp. 90.000 / 100KG
-                        </h3>
-                        <a href="javascript:;" class="btn btn-lg btn-primary text-white text-sm fw-semibold mt-3"
-                            data-aos-delay="200" data-aos="fade" data-aos-duration="3000">
-                            Daftar Member
-                        </a>
                     </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </div>

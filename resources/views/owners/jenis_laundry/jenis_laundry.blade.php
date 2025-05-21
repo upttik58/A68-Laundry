@@ -37,6 +37,8 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama</th>
+                                        <th>Deskripsi</th>
+                                        <th>Foto</th>
                                         <th>Harga</th>
                                         <th>Estimasi Waktu</th>
                                         <th>KG</th>
@@ -55,7 +57,7 @@
     <div class="modal fade" id="addModalJenisLaundry" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form id="jenisLaundryForm" method="POST">
+                <form id="jenisLaundryForm" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title">Tambah/Edit Data Jenis Laundry</h5>
@@ -70,6 +72,14 @@
                         <div class="mb-3">
                             <label for="harga" class="form-label">Harga</label>
                             <input type="number" class="form-control" id="harga" name="harga">
+                        </div>
+                        <div class="mb-3">
+                            <label for="deskripsi" class="form-label">Deskripsi</label>
+                            <input type="number" class="form-control" id="deskripsi" name="deskripsi">
+                        </div>
+                        <div class="mb-3">
+                            <label for="foto" class="form-label">Foto</label>
+                            <input type="file" class="form-control" id="foto" name="foto">
                         </div>
                         <div class="mb-3">
                             <label for="waktu" class="form-label">Estimasi Waktu</label>
@@ -108,6 +118,15 @@
                     },
                     {
                         data: 'harga'
+                    },
+                    {
+                        data: 'deskripsi'
+                    },
+                    {
+                        data: 'foto',
+                        render: function(data, type, row) {
+                            return `<img src="/images/${data}" alt="Foto Jenis Laundry" style="max-width: 100px;">`;
+                        }
                     },
                     {
                         data: 'waktu'

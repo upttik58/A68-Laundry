@@ -37,23 +37,24 @@
                     </div>
 
                     <div class="mx-auto max-w-2xl mt-2">
-                        <form class="row g-4 needs-validation" id="myForm" novalidate>
+                        <form class="row g-4 needs-validation" novalidate action="/registerCustomerStore" method="POST">
+                            @csrf
                             <div>
-                                <label for="name" class="form-label">
+                                <label for="nama" class="form-label">
                                     Nama
                                     <span class="text-danger-emphasis">*</span>
                                 </label>
-                                <input type="text" class="form-control" name="name" id="name" required>
+                                <input type="text" class="form-control" name="nama" id="nama" required>
                                 <div class="invalid-feedback text-xs">
                                     Please enter your name.
                                 </div>
                             </div>
                             <div>
-                                <label for="phone" class="form-label">
+                                <label for="no_hp" class="form-label">
                                     No. WA
                                     <span class="text-danger-emphasis">*</span>
                                 </label>
-                                <input type="text" class="form-control" name="phone" id="phone" required>
+                                <input type="text" class="form-control" name="no_hp" id="no_hp" required>
                                 <div class="invalid-feedback text-xs">
                                     Please enter your phone number.
                                 </div>
@@ -69,11 +70,11 @@
                                 </div>
                             </div>
                             <div>
-                                <label for="address" class="form-label">
+                                <label for="alamat" class="form-label">
                                     Alamat
                                     <span class="text-danger-emphasis">*</span>
                                 </label>
-                                <input type="text" class="form-control" name="address" id="address" required>
+                                <input type="text" class="form-control" name="alamat" id="alamat" required>
                                 <div class="invalid-feedback text-xs">
                                     Please enter your address.
                                 </div>
@@ -100,6 +101,10 @@
                             </div>
 
                             <div class="col-12 text-center">
+                                 <p class="m-0 text-body-emphasis tracking-tight">
+                                    Sudah punya akun? <a href="/loginCustomer"
+                                        class="text-primary-emphasis fw-semibold">Login</a>
+                                </p>
                                 <button type="submit" class="btn btn-lg btn-primary text-white text-sm fw-semibold mt-3"
                                     id="loginButton">
                                     Register

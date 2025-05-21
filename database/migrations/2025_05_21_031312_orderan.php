@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::create('orderan', function (Blueprint $table) {
             $table->id();
+            $table->string('nomor_pesanan');
             $table->string('jenis_laundry');
             $table->string('berat');
             $table->string('harga');
             $table->string('pembayaran');
             $table->string('status');
+            $table->string('snap_token')->nullable();
             $table->timestamps();
         });
     }
