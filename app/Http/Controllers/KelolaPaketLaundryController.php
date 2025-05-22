@@ -24,7 +24,12 @@ class KelolaPaketLaundryController extends Controller
         ]);
 
         try {
-            PaketLaundry::create($validated);
+            PaketLaundry::create([
+                'kode_paket' => substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 8) . '_' . time(),
+                'jenis_laundry_id' => $validated['jenis_laundry_id'],
+                'harga' => $validated['harga'],
+                'berat' => $validated['berat']
+            ]);
             return redirect('/paketLaundry')->with('success', 'Data berhasil ditambahkan');
         } catch (\Exception $e) {
             return redirect('/paketLaundry')->with('error', 'Data gagal ditambahkan: ' . $e->getMessage());

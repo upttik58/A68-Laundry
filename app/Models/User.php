@@ -41,4 +41,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function paketMember(){
+        return $this->hasMany(PaketMember::class, 'user_id', 'id');
+    }
 }

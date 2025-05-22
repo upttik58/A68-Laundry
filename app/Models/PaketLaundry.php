@@ -13,4 +13,9 @@ class PaketLaundry extends Model
     {
         return $this->belongsTo(JenisLaundry::class, 'jenis_laundry_id', 'id');
     }
+
+    public function paketMember()
+    {
+        return $this->hasMany(PaketMember::class, 'paket_laundry_id', 'id');
+    }
 }

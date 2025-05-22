@@ -22,16 +22,29 @@
                 </li>
 
                 <li class="pc-item">
-                    <a href="/" class="pc-link">
+                    <a href="/paketLaundryMember" class="pc-link">
                         <span class="pc-micon"><i class="ti ti-folder"></i></span>
                         <span class="pc-mtext">Paket Laundry</span>
                     </a>
                 </li>
-                <li class="pc-item">
-                    <a href="/" class="pc-link">
-                        <span class="pc-micon"><i class="ti ti-folder"></i></span>
+                <li class="pc-item pc-hasmenu">
+                    <a href="#!" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-credit-card"></i></span>
                         <span class="pc-mtext">Order Laundry</span>
+                        <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
                     </a>
+                    <ul class="pc-submenu">
+                        <li class="pc-item">
+                            <a class="pc-link" href="/offline">
+                                Langsung/Tanpa Paket
+                            </a>
+                        </li>
+                        <li class="pc-item">
+                            <a class="pc-link" href="/online">
+                                Order Paket
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
 

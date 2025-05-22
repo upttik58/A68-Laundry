@@ -40,7 +40,8 @@ class OrderanStafController extends Controller
                 'berat'         => $validatedData['berat'],
                 'harga'         => $validatedData['harga'],
                 'pembayaran'    => $validatedData['pembayaran'],
-                'status'         => 'Belum Lunas'
+                'status'        => 'Belum Lunas',
+                'status_cucian' => 'Orderan Masuk',
             ]);
 
             OrderanDetail::create([
@@ -180,7 +181,10 @@ class OrderanStafController extends Controller
     {
         try {
             $orderan = Orderan::findOrFail($id);
-            $orderan->update(['status' => 'Sudah Lunas']);
+            $orderan->update([
+                'status' => 'Sudah Lunas',
+                'status_cucian' => 'Sedang Dicuci'
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -193,12 +197,55 @@ class OrderanStafController extends Controller
             ], 500);
         }
     }
+    
+    public function bayarOfflineSelesai($id)
+    {
+        try {
+            $orderan = Orderan::findOrFail($id);
+            $orderan->update([
+                'status_cucian' => 'Sudah Selesai'
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Proses selesai, cucian sudah selesai.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Proses gagal, cucian belum selesai: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    public function bayarOfflineDiambil($id)
+    {
+        try {
+            $orderan = Orderan::findOrFail($id);
+            $orderan->update([
+                'status_cucian' => 'Sudah Diambil'
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Proses selesai, cucian sudah diambil.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Proses gagal, cucian belum diambil: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function bayarOfflineSuccess($id)
     {
         try {
             $orderan = Orderan::where('snap_token', $id)->first();
-            $orderan->update(['status' => 'Sudah Lunas']);
+            $orderan->update([
+                'status' => 'Sudah Lunas',
+                'status_cucian' => 'Sedang Dicuci'
+            ]);
 
             return redirect('/offline')->with('success', 'Pembayaran berhasil dilakukan.');
         } catch (\Exception $e) {

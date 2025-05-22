@@ -6,27 +6,51 @@
     <div class="pc-content">
         <div class="row">
             <div class="col-xl-12 col-md-12">
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @foreach ($errors->all() as $error)
+                            {{ $error }}
+                        @endforeach
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex justify-content-between">
                             <span class="d-flex align-items-center">
-                                KELOLA ORDERAN ONLINE
+                                KELOLA PAKET LAUNDRY
                             </span>
+                            <a href="#" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#addModalPaketLaundryMember">
+                                Tambah Data
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="orderOnlineLaundryTable" class="table table-striped">
+                            <table id="paketLaundryMember" class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Nama</th>
-                                        <th>Nomor Telepon</th>
-                                        <th>No.HP</th>
-                                        <th>Alamat</th>
-                                        <th>Status</th>
+                                        <th>Kode Paket</th>
+                                        <th>Jenis Laundry</th>
                                         <th>KG</th>
-                                        <th>Sisa Paket KG</th>
+                                        <th>Terpakai KG</th>
+                                        <th>Sisa KG</th>
+                                        <th>Harga</th>
+                                        <th>Status</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -37,123 +61,195 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="addModalPaketLaundryMember" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="paketLaundryMemberForm" method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title">Tambah/Edit Data Paket Laundry</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="id">
+                        <div class="mb-3">
+                            <label for="paket_laundry_id" class="form-label">Paket</label>
+                            <select class="form-select" id="paket_laundry_id" name="paket_laundry_id">
+                                <option disabled selected>Pilih Paket Laundry</option>
+                                @foreach ($paketLaundry as $pl)
+                                    <option value="{{ $pl->id }}">{{ $pl->jenisLaundry->nama }} - Rp.
+                                        {{ $pl->harga }}/{{ $pl->berat }} KG</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
     <script>
         $(document).ready(function() {
-            let table = $('#orderOnlineLaundryTable').DataTable({
-                processing: true,
-                serverSide: false,
-                data: [{
-                        "DT_RowIndex": 1,
-                        "name": "John Doe",
-                        "phone_number": "081234567890",
-                        "alt_phone_number": "081298765432",
-                        "address": "Jl. Mawar No. 1",
-                        "status": "Menunggu Pembayaran",
-                        "weight": "5 KG",
-                        "remaining_kg": "15 KG"
-                    },
-                    {
-                        "DT_RowIndex": 2,
-                        "name": "Jane Smith",
-                        "phone_number": "081234567891",
-                        "alt_phone_number": "081234567892",
-                        "address": "Jl. Melati No. 2",
-                        "status": "Diproses",
-                        "weight": "3 KG",
-                        "remaining_kg": "7 KG"
-                    }
-                ],
+            let data = @json($paketMember);
+
+            // Inisialisasi DataTable dan simpan instance-nya
+            let table = $('#paketLaundryMember').DataTable({
+                data: data,
                 columns: [{
-                        data: 'DT_RowIndex'
+                        data: null,
+                        render: function(data, type, row, meta) {
+                            return meta.row + 1;
+                        }
                     },
                     {
-                        data: 'name'
+                        data: 'paket_laundry.kode_paket',
                     },
                     {
-                        data: 'phone_number'
+                        data: 'paket_laundry.jenis_laundry.nama',
                     },
                     {
-                        data: 'alt_phone_number'
+                        data: 'paket_laundry.berat'
                     },
                     {
-                        data: 'address'
+                        data: 'kg_terpakai',
+                    },
+                    {
+                        data: 'kg_sisa',
+                    },
+                    {
+                        data: 'paket_laundry.harga'
                     },
                     {
                         data: 'status'
                     },
                     {
-                        data: 'weight'
-                    },
-                    {
-                        data: 'remaining_kg'
-                    },
-                    {
-                        data: 'name',
-                        render: function(data) {
-                            return `
-                        <button class='btn btn-sm btn-info' onclick='jemputOrderan("${data}")'>Jemput Orderan</button>
-                        <button class='btn btn-sm btn-primary' onclick='masukkanTimbangan("${data}")'>Masukkan Timbangan</button>
-                    `;
+                        data: 'id',
+                        render: function(data, type, row) {
+                            if (row.status === 'belum lunas') {
+                                return `<button type="button" class="btn btn-sm btn-info" onclick="editData('${row.id}')">Edit</button>
+                                        <button type="button" class="btn btn-sm btn-danger" onclick="hapusData('${row.id}')">Hapus</button>
+                                        <button type="button" class="btn btn-sm btn-secondary" onclick="bayar('${row.snap_token}')">bayar</button>`;
+                            } else {
+                                return '';
+                            }
                         }
                     }
                 ]
             });
+
+            // Simpan instance DataTable ke window agar bisa diakses di editData
+            window.paketLaundryMember = table;
         });
 
-        // Function to Jemput Orderan
-        function jemputOrderan(name) {
-            let table = $('#orderOnlineLaundryTable').DataTable();
-            let data = table.data().toArray().find(row => row.name === name);
-
+        function editData(id) {
+            // Ambil data dari DataTable instance global
+            let table = window.paketLaundryMember;
+            let data = table.data().toArray().find(row => String(row.id) === String(id));
             if (data) {
-                Swal.fire({
-                    title: "Jemput Orderan",
-                    text: `Apakah Anda yakin ingin menjemput orderan ${data.name}?`,
-                    icon: "question",
-                    showCancelButton: true,
-                    confirmButtonText: "Ya, jemput!",
-                    cancelButtonText: "Batal"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        data.status = "Dijemput";
-                        table.row().invalidate().draw();
-                        Swal.fire("Berhasil!", "Orderan dijemput.", "success");
-                    }
-                });
+                $('#id').val(data.id);
+                $('#paket_laundry_id').val(data.paket_laundry_id).trigger('change');
+                $('#addModalPaketLaundryMember').modal('show');
             }
         }
 
-        // Function to Masukkan Timbangan
-        function masukkanTimbangan(name) {
-            let table = $('#orderOnlineLaundryTable').DataTable();
-            let data = table.data().toArray().find(row => row.name === name);
-
-            if (data) {
-                Swal.fire({
-                    title: "Masukkan Timbangan",
-                    input: 'number',
-                    inputLabel: 'Masukkan Berat (KG)',
-                    inputValue: data.weight ? parseFloat(data.weight) : '',
-                    showCancelButton: true,
-                    confirmButtonText: "Simpan",
-                    cancelButtonText: "Batal"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        let beratBaru = result.value;
-                        if (beratBaru > 0) {
-                            data.weight = `${beratBaru} KG`;
-                            data.remaining_kg = `${parseFloat(data.remaining_kg) - beratBaru} KG`;
-                            table.row().invalidate().draw();
-                            Swal.fire("Berhasil!", "Data timbang berhasil disimpan.", "success");
-                        } else {
-                            Swal.fire("Gagal!", "Berat harus lebih dari 0.", "error");
+        function hapusData(id) {
+            Swal.fire({
+                title: "Apakah Anda yakin?",
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, hapus!",
+                cancelButtonText: "Batal"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/paketLaundryMember/" + id,
+                        type: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+                        },
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire(
+                                    "Berhasil!",
+                                    response.message,
+                                    "success"
+                                ).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire(
+                                    "Gagal!",
+                                    response.message,
+                                    "error"
+                                );
+                            }
+                        },
+                        error: function(xhr) {
+                            let msg = "Gagal menghapus data. Silakan coba lagi.";
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                msg = xhr.responseJSON.message;
+                            }
+                            Swal.fire(
+                                "Gagal!",
+                                msg,
+                                "error"
+                            );
                         }
-                    }
-                });
-            }
+                    });
+                }
+            });
         }
+
+        function bayar(id) {
+            // SnapToken acquired from previous step
+            snap.pay(id, {
+                // Optional
+                onSuccess: function(result) {
+                    /* You may add your own js here, this is just example */
+                    // document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+                    window.location.href = 'paketLaundryMember/bayar/success/' + id;
+                },
+                // Optional
+                onPending: function(result) {
+                    /* You may add your own js here, this is just example */
+                    document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+                },
+                // Optional
+                onError: function(result) {
+                    /* You may add your own js here, this is just example */
+                    document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+                }
+            });
+        }
+
+        // Ganti action form sesuai id
+        $('#addModalPaketLaundryMember').on('show.bs.modal', function(event) {
+            let id = $('#id').val();
+            let form = $('#paketLaundryMemberForm');
+            if (id) {
+                form.attr('action', '/paketLaundryMember/edit/' + id);
+            } else {
+                form.attr('action', '/paketLaundryMember');
+            }
+        });
+        // Reset action saat modal ditutup
+        $('#addModalPaketLaundryMember').on('hidden.bs.modal', function() {
+            $('#paketLaundryMemberForm').attr('action', '/paketLaundryMember');
+            $('#paketLaundryMemberForm')[0].reset();
+            $('#id').val('');
+        });
     </script>
 @endpush

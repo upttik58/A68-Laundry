@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orderan', function (Blueprint $table) {
+        Schema::create('paket_member', function (Blueprint $table) {
             $table->id();
-            $table->string('nomor_pesanan');
-            $table->string('jenis_laundry');
-            $table->string('berat');
-            $table->string('harga');
-            $table->string('pembayaran');
-            $table->string('status');
-            $table->string('status_cucian');
+            $table->foreignId('paket_laundry_id')->constrained('paket_laundry')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('kg_terpakai');
+            $table->string('kg_sisa');
             $table->string('snap_token')->nullable();
+            $table->string('status');
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orderan');
+        Schema::dropIfExists('paket_member');
     }
 };

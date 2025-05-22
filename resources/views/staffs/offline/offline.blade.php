@@ -44,6 +44,7 @@
                                         <th>Total Biaya</th>
                                         <th>Pembayaran</th>
                                         <th>Status</th>
+                                        <th>Status Cucian</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -185,22 +186,81 @@
                         }
                     },
                     {
+                        data: 'status_cucian',
+                        render: function(data, type, row) {
+                            let badgeClass = '';
+                            let label = data;
+                            if (data === 'Orderan Masuk') {
+                                badgeClass = 'bg-danger';
+                            }
+                            if (data === 'Sedang Dicuci') {
+                                badgeClass = 'bg-warning';
+                            }
+                            if (data === 'Sudah Selesai') {
+                                badgeClass = 'bg-primary';
+                            }
+                            if (data === 'Sudah Diambil') {
+                                badgeClass = 'bg-success';
+                            }
+                            return `<span class="badge ${badgeClass}">${label}</span>`;
+                        }
+                    },
+                    {
                         data: 'id',
                         render: function(data, type, row) {
-                            if (row.status === 'Sudah Lunas') {
-                                return `<button type="button" class="btn btn-sm btn-success" onclick="cetakNota('${row.id}')">Cetak Nota</button>`;
+                            let dropdownItems = '';
+
+                            if (row.status_cucian === 'Orderan Masuk') {
+                                if(row.status === 'Belum Lunas'){
+                                    if (row.pembayaran === 'Cash') {
+                                        dropdownItems += `
+                                                <button class="dropdown-item" type="button" onclick="bayar('${row.id}')">Bayar (Cash)</button>
+                                            `;
+                                    }
+    
+                                    if (row.pembayaran === 'Transfer') {
+                                        dropdownItems += `
+                                                <button class="dropdown-item" type="button" onclick="bayarTransfer('${row.snap_token}')">Bayar (Transfer)</button>
+                                            `;
+                                    }
+                                }
+
+                                dropdownItems += `
+                                        <button class="dropdown-item" type="button" onclick="editData('${row.id}')">Edit</button>
+                                        <button class="dropdown-item" type="button" onclick="hapusData('${row.id}')">Hapus</button>
+                                    `;
                             }
-                            let bayarBtn = '';
-                            if (row.pembayaran === 'Cash') {
-                                bayarBtn =
-                                    `<button type="button" class="btn btn-sm btn-success" onclick="bayar('${row.id}')">Bayar</button>`;
-                            } else if (row.pembayaran === 'Transfer') {
-                                bayarBtn =
-                                    `<button type="button" class="btn btn-sm btn-success" onclick="bayarTransfer('${row.snap_token}')">Bayar</button>`;
+
+                            if (row.status_cucian === 'Sedang Dicuci' && row.status === 'Sudah Lunas') {
+                                dropdownItems += `
+                                    <button class="dropdown-item" type="button" onclick="cetakNota('${row.id}')">Cetak Nota</button>
+                                    <button class="dropdown-item" type="button" onclick="selesai('${row.id}')">Proses Selesai</button>
+                                `;
                             }
-                            return `<button type="button" class="btn btn-sm btn-info" onclick="editData('${row.id}')">Edit</button>
-                                    <button type="button" class="btn btn-sm btn-danger" onclick="hapusData('${row.id}')">Hapus</button>
-                                    ${bayarBtn}`;
+
+                            if (row.status_cucian === 'Sudah Selesai') {
+                                dropdownItems += `
+                                    <button class="dropdown-item" type="button" onclick="cetakNota('${row.id}')">Cetak Nota</button>
+                                    <button class="dropdown-item" type="button" onclick="diambil('${row.id}')">Orderan Diambil</button>
+                                `;
+                            }
+
+                            if (row.status_cucian === 'Sudah Diambil') {
+                                dropdownItems += `
+                                    <button class="dropdown-item" type="button" onclick="cetakNota('${row.id}')">Cetak Nota</button>
+                                `;
+                            }
+
+                            return `
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Aksi
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        ${dropdownItems}
+                                    </div>
+                                </div>
+                            `;
                         }
                     }
                 ]
@@ -236,7 +296,7 @@
                 onSuccess: function(result) {
                     /* You may add your own js here, this is just example */
                     // document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
-                    window.location.href = 'offline/bayar/success/'+id;
+                    window.location.href = 'offline/bayar/success/' + id;
                 },
                 // Optional
                 onPending: function(result) {
@@ -265,6 +325,114 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         url: "/offline/bayar/" + id,
+                        type: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+                        },
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire(
+                                    "Berhasil!",
+                                    response.message,
+                                    "success"
+                                ).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire(
+                                    "Gagal!",
+                                    response.message,
+                                    "error"
+                                );
+                            }
+                        },
+                        error: function(xhr) {
+                            let msg = "Gagal menghapus data. Silakan coba lagi.";
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                msg = xhr.responseJSON.message;
+                            }
+                            Swal.fire(
+                                "Gagal!",
+                                msg,
+                                "error"
+                            );
+                        }
+                    });
+                }
+            });
+        }
+
+        function selesai(id) {
+            Swal.fire({
+                title: "Konfirmasi Selesai Pesanan",
+                text: "Apakah Anda yakin ingin menyelesaikan pesanan ini?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, selesai!",
+                cancelButtonText: "Batal"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/offline/selesai/" + id,
+                        type: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+                        },
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire(
+                                    "Berhasil!",
+                                    response.message,
+                                    "success"
+                                ).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire(
+                                    "Gagal!",
+                                    response.message,
+                                    "error"
+                                );
+                            }
+                        },
+                        error: function(xhr) {
+                            let msg = "Gagal menghapus data. Silakan coba lagi.";
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                msg = xhr.responseJSON.message;
+                            }
+                            Swal.fire(
+                                "Gagal!",
+                                msg,
+                                "error"
+                            );
+                        }
+                    });
+                }
+            });
+        }
+        
+        function diambil(id) {
+            Swal.fire({
+                title: "Konfirmasi Pesanan Diambil",
+                text: "Apakah Anda yakin ingin mengambil pesanan ini?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, diambil!",
+                cancelButtonText: "Batal"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/offline/diambil/" + id,
                         type: "POST",
                         headers: {
                             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")

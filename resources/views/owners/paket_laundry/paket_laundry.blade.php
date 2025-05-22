@@ -36,6 +36,7 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
+                                        <th>Kode Paket</th>
                                         <th>Jenis</th>
                                         <th>Total KG</th>
                                         <th>Harga</th>
@@ -105,8 +106,10 @@
                         }
                     },
                     {
+                        data: 'kode_paket',
+                    },
+                    {
                         data: 'jenis_laundry.nama',
-                        defaultContent: '-'
                     },
                     {
                         data: 'berat'
