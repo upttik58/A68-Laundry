@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\JenisLaundry;
-use App\Models\Orderan;
 use App\Models\PaketLaundry;
 use App\Models\PaketMember;
 use Illuminate\Http\Request;
@@ -13,7 +11,7 @@ use Midtrans\Snap;
 class MemberController extends Controller
 {
     public function index(){
-        $paketMember = PaketMember::with('paketLaundry.jenisLaundry')->get();
+        $paketMember = PaketMember::with('paketLaundry.jenisLaundry')->where('user_id',auth()->user()->id)->get();
         $paketLaundry = PaketLaundry::with('jenisLaundry')->get();
         return view('members.paket.paket', compact('paketMember', 'paketLaundry'));
     }
@@ -21,18 +19,18 @@ class MemberController extends Controller
     public function store(Request $request){
         try {
             $request->validate([
-                'paket_laundry_id' => 'required|unique:paket_member',
+                'paket_laundry_id' => 'required',
             ]);
 
             $paketLaundry = PaketLaundry::findOrFail($request->paket_laundry_id);
 
             $paketMember = PaketMember::create([
                 'paket_laundry_id' => $request->paket_laundry_id,
-                // 'user_id' => auth()->user()->id,
-                'user_id' => 1,
+                'user_id' => auth()->user()->id,
                 'kg_terpakai' => 0,
                 'kg_sisa' => $paketLaundry->berat,
                 'status' => 'Belum Lunas',
+                'kode_paket' => substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 8) . '_' . time(),
             ]);
 
             // Set your Merchant Server Key
@@ -50,9 +48,9 @@ class MemberController extends Controller
                     'gross_amount' => $paketLaundry->harga,
                 ),
                 'customer_details' => array(
-                    'first_name' => 'yusuf',
-                    'phone'      => '11111',
-                    'address'    => '11111'
+                    'first_name' => auth()->user()->nama,
+                    'phone'      => auth()->user()->no_hp,
+                    'address'    => auth()->user()->alamat,
                 )
             );
 
@@ -110,12 +108,5 @@ class MemberController extends Controller
         } catch (\Exception $e) {
             return redirect('/paketLaundryMember')->with('error', 'Pembayaran gagal: ' . $e->getMessage());
         }
-    }
-
-    public function orderLangsung()
-    {
-        $jenisLaundry = JenisLaundry::all();
-        $orderan = Orderan::with('jenisLaundry')->get();
-        return view('members.order_langsung.order_langsung', compact('jenisLaundry','orderan'));
     }
 }

@@ -18,4 +18,13 @@ class Orderan extends Model
     {
         return $this->belongsTo(JenisLaundry::class, 'jenis_laundry');
     }
+
+    public function orderLocation()
+    {
+        return $this->hasOne(OrderLocation::class, 'order_id');
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

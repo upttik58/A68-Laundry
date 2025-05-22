@@ -36,7 +36,6 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Kode Paket</th>
                                         <th>Jenis</th>
                                         <th>Total KG</th>
                                         <th>Harga</th>
@@ -104,9 +103,6 @@
                         render: function(data, type, row, meta) {
                             return meta.row + 1;
                         }
-                    },
-                    {
-                        data: 'kode_paket',
                     },
                     {
                         data: 'jenis_laundry.nama',

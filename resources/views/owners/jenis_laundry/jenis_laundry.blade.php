@@ -75,7 +75,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="deskripsi" class="form-label">Deskripsi</label>
-                            <input type="number" class="form-control" id="deskripsi" name="deskripsi">
+                            <input type="text" class="form-control" id="deskripsi" name="deskripsi">
                         </div>
                         <div class="mb-3">
                             <label for="foto" class="form-label">Foto</label>

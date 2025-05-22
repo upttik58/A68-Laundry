@@ -15,7 +15,7 @@ class OrderanStafController extends Controller
     public function offline()
     {
         $jenisLaundry = JenisLaundry::all();
-        $orderan = Orderan::with(['orderanDetail', 'jenisLaundry'])->get();
+        $orderan = Orderan::with(['orderanDetail', 'jenisLaundry'])->where('is_offline', '1')->get();
         return view('staffs.offline.offline', compact('jenisLaundry', 'orderan'));
     }
 
@@ -42,6 +42,7 @@ class OrderanStafController extends Controller
                 'pembayaran'    => $validatedData['pembayaran'],
                 'status'        => 'Belum Lunas',
                 'status_cucian' => 'Orderan Masuk',
+                'is_offline'    => '1',
             ]);
 
             OrderanDetail::create([
@@ -129,7 +130,7 @@ class OrderanStafController extends Controller
                 'berat'         => $validatedData['berat'],
                 'harga'         => $validatedData['harga'],
                 'pembayaran'    => $validatedData['pembayaran'],
-                'status'        => 'Belum Lunas' 
+                'status'        => 'Belum Lunas'
             ]);
 
             OrderanDetail::where('orderan_id', $id)->update([
@@ -137,8 +138,8 @@ class OrderanStafController extends Controller
                 'no_hp'      => $validatedData['no_hp'],
                 'alamat'     => $validatedData['alamat'],
             ]);
-            
-            if($validatedData['pembayaran'] == 'Transfer'){
+
+            if ($validatedData['pembayaran'] == 'Transfer') {
 
                 // Set your Merchant Server Key
                 Config::$serverKey = config('midtrans.serverKey');
@@ -197,7 +198,7 @@ class OrderanStafController extends Controller
             ], 500);
         }
     }
-    
+
     public function bayarOfflineSelesai($id)
     {
         try {
@@ -217,7 +218,7 @@ class OrderanStafController extends Controller
             ], 500);
         }
     }
-    
+
     public function bayarOfflineDiambil($id)
     {
         try {
@@ -250,6 +251,71 @@ class OrderanStafController extends Controller
             return redirect('/offline')->with('success', 'Pembayaran berhasil dilakukan.');
         } catch (\Exception $e) {
             return redirect('/offline')->with('error', 'Terjadi kesalahan saat memproses pembayaran: ' . $e->getMessage());
+        }
+    }
+
+    public function online()
+    {
+        $jenisLaundry = JenisLaundry::all();
+        $orderan = Orderan::with(['orderLocation', 'jenisLaundry', 'user'])
+                            ->where('is_offline', '0')
+                            ->where('status_cucian','!=', 'Orderan Masuk')
+                            ->get();
+        return view('staffs.online.online', compact('orderan','jenisLaundry'));
+    }
+
+    public function jemput($id)
+    {
+        try {
+            $orderan = Orderan::findOrFail($id);
+            $orderan->update([
+                'status_cucian' => 'Menunggu Timbangan'
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cucian Sedang Dijempt'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Proses gagal, cucian belum dijemput: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    public function berat(Request $request)
+    {
+        try {
+            $orderan = Orderan::findOrFail($request->id);
+            $orderan->update([
+                'status_cucian' => 'Menunggu Pembayaran',
+                'berat'         => $request->berat,
+                'harga'         => $request->harga
+            ]);
+
+            return redirect('/online')->with('success', 'Input Timbangan Berhasil');
+        } catch (\Exception $e) {
+            return redirect('/online')->with('error', 'Terjadi kesalahan saat memproses data.'. $e->getMessage());
+        }
+    }
+
+    public function antar($id){
+        try {
+            $orderan = Orderan::findOrFail($id);
+            $orderan->update([
+                'status_cucian' => 'Cucian Dalam Perjalanan'
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cucian Sedang Diantar'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Proses gagal, cucian belum diantar: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

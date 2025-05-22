@@ -139,7 +139,6 @@
     <script>
         $(document).ready(function() {
             let data = @json($orderan);
-            console.log(data);
 
             // Inisialisasi DataTable dan simpan instance-nya
             let table = $('#orderOfflineLaundryTable').DataTable({

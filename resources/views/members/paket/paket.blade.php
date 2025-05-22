@@ -109,7 +109,7 @@
                         }
                     },
                     {
-                        data: 'paket_laundry.kode_paket',
+                        data: 'kode_paket',
                     },
                     {
                         data: 'paket_laundry.jenis_laundry.nama',

@@ -8,6 +8,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\OrderanStafController;
+use App\Http\Controllers\OrderLangsungController;
+use App\Http\Controllers\OrderPaketController;
 use Illuminate\Support\Facades\Route;
 
 // ADMINS
@@ -46,6 +48,9 @@ Route::post('/offline/selesai/{id}', [OrderanStafController::class, 'bayarOfflin
 Route::post('/offline/diambil/{id}', [OrderanStafController::class, 'bayarOfflineDiambil']);
 
 Route::get('/online', [OrderanStafController::class, 'online']);
+Route::post('/online/jemput/{id}', [OrderanStafController::class, 'jemput']);
+Route::post('/online/berat', [OrderanStafController::class, 'berat']);
+Route::post('/online/antar/{id}', [OrderanStafController::class, 'antar']);
 
 
 // CUSTOMER 
@@ -74,6 +79,15 @@ Route::post('/paketLaundryMember/edit/{id}', [MemberController::class, 'update']
 Route::get('/paketLaundryMember/bayar/success/{id}', [MemberController::class, 'bayarSuccess']);
 
 // order langsung
-Route::get('/orderLangsung', [MemberController::class, 'orderLangsung']);
+Route::post('/orderLangsung', [OrderLangsungController::class, 'orderLangsungStore']);
+Route::post('/orderLangsung/edit/{id}', [OrderLangsungController::class, 'orderLangsungUpdate']);
+Route::post('/orderLangsung/{id}', [OrderLangsungController::class, 'orderLangsungDestroy']);
+Route::post('/bayarOrderan', [OrderLangsungController::class, 'orderLangsungBayar']);
+Route::get('/orderLangsung/bayar/success/{id}', [OrderLangsungController::class, 'orderLangsungBayarSuccess']);
+Route::get('/orderLangsung/setLocation/{id}', [OrderLangsungController::class, 'setLocation']);
+Route::get('/orderLangsung/geocode', [OrderLangsungController::class, 'search']);
+Route::post('/updateLocation', [OrderLangsungController::class, 'setLocationInsertOrUpdate']);
+Route::post('/orderLangsung/selesai/{id}', [OrderLangsungController::class, 'selesai']);
 
 // order paket 
+Route::get('/orderPaket', [OrderPaketController::class, 'orderPaket']);

@@ -45,4 +45,8 @@ class User extends Authenticatable
     public function paketMember(){
         return $this->hasMany(PaketMember::class, 'user_id', 'id');
     }
+
+    public function orderan(){
+        return $this->hasMany(Orderan::class, 'user_id', 'id');
+    }
 }

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('paket_laundry_id')->constrained('paket_laundry')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('kode_paket');
             $table->string('kg_terpakai');
             $table->string('kg_sisa');
             $table->string('snap_token')->nullable();
