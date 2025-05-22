@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\JenisLaundry;
+use App\Models\Orderan;
 use App\Models\PaketLaundry;
 use App\Models\PaketMember;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class MemberController extends Controller
             $paketMember = PaketMember::create([
                 'paket_laundry_id' => $request->paket_laundry_id,
                 // 'user_id' => auth()->user()->id,
-                'user_id' => 4,
+                'user_id' => 1,
                 'kg_terpakai' => 0,
                 'kg_sisa' => $paketLaundry->berat,
                 'status' => 'Belum Lunas',
@@ -109,5 +110,12 @@ class MemberController extends Controller
         } catch (\Exception $e) {
             return redirect('/paketLaundryMember')->with('error', 'Pembayaran gagal: ' . $e->getMessage());
         }
+    }
+
+    public function orderLangsung()
+    {
+        $jenisLaundry = JenisLaundry::all();
+        $orderan = Orderan::with('jenisLaundry')->get();
+        return view('members.order_langsung.order_langsung', compact('jenisLaundry','orderan'));
     }
 }

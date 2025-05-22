@@ -35,12 +35,12 @@
                     </a>
                     <ul class="pc-submenu">
                         <li class="pc-item">
-                            <a class="pc-link" href="/offline">
+                            <a class="pc-link" href="/orderLangsung">
                                 Langsung/Tanpa Paket
                             </a>
                         </li>
                         <li class="pc-item">
-                            <a class="pc-link" href="/online">
+                            <a class="pc-link" href="/orderPaket">
                                 Order Paket
                             </a>
                         </li>

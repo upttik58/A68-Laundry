@@ -66,8 +66,14 @@ Route::post('/cekStatusCucian', [CustomerController::class, 'cekStatusCucian']);
 
 // MEMBER 
 // ===========================================================================
+// paket laundry 
 Route::get('/paketLaundryMember', [MemberController::class, 'index']);
 Route::post('/paketLaundryMember', [MemberController::class, 'store']);
 Route::post('/paketLaundryMember/{id}', [MemberController::class, 'destroy']);
 Route::post('/paketLaundryMember/edit/{id}', [MemberController::class, 'update']);
 Route::get('/paketLaundryMember/bayar/success/{id}', [MemberController::class, 'bayarSuccess']);
+
+// order langsung
+Route::get('/orderLangsung', [MemberController::class, 'orderLangsung']);
+
+// order paket 

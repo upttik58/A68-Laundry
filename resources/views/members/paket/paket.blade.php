@@ -132,10 +132,10 @@
                     {
                         data: 'id',
                         render: function(data, type, row) {
-                            if (row.status === 'belum lunas') {
+                            if (row.status === 'Belum Lunas') {
                                 return `<button type="button" class="btn btn-sm btn-info" onclick="editData('${row.id}')">Edit</button>
                                         <button type="button" class="btn btn-sm btn-danger" onclick="hapusData('${row.id}')">Hapus</button>
-                                        <button type="button" class="btn btn-sm btn-secondary" onclick="bayar('${row.snap_token}')">bayar</button>`;
+                                        <button type="button" class="btn btn-sm btn-secondary" onclick="bayar('${row.snap_token}')">Bayar</button>`;
                             } else {
                                 return '';
                             }
