@@ -117,7 +117,7 @@
                         </li>
 
                         <li class="nav-item ms-xl-auto">
-                            <a href="{{ asset('contact.html') }}" class="px-3 text-body-emphasis bg-body-secondary-hover border nav-link rounded-3 text-base leading-6 fw-semibold text-center">
+                            <a href="/loginCustomer" class="px-3 text-body-emphasis bg-body-secondary-hover border nav-link rounded-3 text-base leading-6 fw-semibold text-center">
                                 Login/Register
                             </a>
                         </li>

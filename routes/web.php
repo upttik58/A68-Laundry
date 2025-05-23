@@ -79,6 +79,7 @@ Route::post('/paketLaundryMember/edit/{id}', [MemberController::class, 'update']
 Route::get('/paketLaundryMember/bayar/success/{id}', [MemberController::class, 'bayarSuccess']);
 
 // order langsung
+Route::get('/orderLangsung', [OrderLangsungController::class, 'orderLangsung']);
 Route::post('/orderLangsung', [OrderLangsungController::class, 'orderLangsungStore']);
 Route::post('/orderLangsung/edit/{id}', [OrderLangsungController::class, 'orderLangsungUpdate']);
 Route::post('/orderLangsung/{id}', [OrderLangsungController::class, 'orderLangsungDestroy']);
@@ -91,3 +92,10 @@ Route::post('/orderLangsung/selesai/{id}', [OrderLangsungController::class, 'sel
 
 // order paket 
 Route::get('/orderPaket', [OrderPaketController::class, 'orderPaket']);
+Route::post('/orderPaket', [OrderPaketController::class, 'orderPaketStore']);
+Route::post('/orderPaket/edit/{id}', [OrderPaketController::class, 'orderPaketUpdate']);
+Route::post('/orderPaket/{id}', [OrderPaketController::class, 'orderPaketDestroy']);
+Route::get('/orderPaket/setLocation/{id}', [OrderPaketController::class, 'setLocation']);
+Route::get('/orderPaket/geocode', [OrderPaketController::class, 'search']);
+Route::post('/updateLocationPaket', [OrderPaketController::class, 'setLocationInsertOrUpdate']);
+Route::post('/orderPaket/selesai/{id}', [OrderPaketController::class, 'selesai']);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\JenisLaundry;
 use App\Models\Orderan;
 use App\Models\OrderanDetail;
+use App\Models\PaketMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Midtrans\Config;
@@ -43,6 +44,7 @@ class OrderanStafController extends Controller
                 'status'        => 'Belum Lunas',
                 'status_cucian' => 'Orderan Masuk',
                 'is_offline'    => '1',
+                'is_paket'      => '0'
             ]);
 
             OrderanDetail::create([
@@ -258,10 +260,10 @@ class OrderanStafController extends Controller
     {
         $jenisLaundry = JenisLaundry::all();
         $orderan = Orderan::with(['orderLocation', 'jenisLaundry', 'user'])
-                            ->where('is_offline', '0')
-                            ->where('status_cucian','!=', 'Orderan Masuk')
-                            ->get();
-        return view('staffs.online.online', compact('orderan','jenisLaundry'));
+            ->where('is_offline', '0')
+            ->where('status_cucian', '!=', 'Orderan Masuk')
+            ->get();
+        return view('staffs.online.online', compact('orderan', 'jenisLaundry'));
     }
 
     public function jemput($id)
@@ -283,24 +285,45 @@ class OrderanStafController extends Controller
             ], 500);
         }
     }
-    
+
     public function berat(Request $request)
     {
         try {
             $orderan = Orderan::findOrFail($request->id);
-            $orderan->update([
-                'status_cucian' => 'Menunggu Pembayaran',
-                'berat'         => $request->berat,
-                'harga'         => $request->harga
-            ]);
+            if ($orderan->is_paket == 0) {
+                $orderan->update([
+                    'status_cucian' => 'Menunggu Pembayaran',
+                    'berat'         => $request->berat,
+                    'harga'         => $request->harga
+                ]);
+            } else {
+                $paketMember = PaketMember::with('paketLaundry')->whereHas('paketLaundry', function ($query) use ($orderan) {
+                    $query->where('jenis_laundry_id', $orderan->jenis_laundry);
+                })->first();
+
+                if ($paketMember->kg_sisa > 0 && $request->berat <= $paketMember->kg_sisa) {
+                    $orderan->update([
+                        'status_cucian' => 'Sedang Dicuci',
+                        'berat'         => $request->berat,
+                        'harga'         => $request->harga
+                    ]);
+
+                    $paketMember->kg_terpakai = $request->berat;
+                    $paketMember->kg_sisa = $paketMember->paketLaundry->berat - $request->berat;
+                    $paketMember->save();
+                } else {
+                    return redirect('/online')->with('error', 'Paket Laundry Anda Sudah Habis');
+                }
+            }
 
             return redirect('/online')->with('success', 'Input Timbangan Berhasil');
         } catch (\Exception $e) {
-            return redirect('/online')->with('error', 'Terjadi kesalahan saat memproses data.'. $e->getMessage());
+            return redirect('/online')->with('error', 'Terjadi kesalahan saat memproses data.' . $e->getMessage());
         }
     }
 
-    public function antar($id){
+    public function antar($id)
+    {
         try {
             $orderan = Orderan::findOrFail($id);
             $orderan->update([

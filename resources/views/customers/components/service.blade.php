@@ -35,6 +35,10 @@
                             <p class="m-0 mt-3 text-body-secondary line-clamp-2 text-sm leading-6">
                                 {{$jl->deskripsi}}
                             </p>
+                             <a href="/orderLangsung" class="btn btn-lg btn-primary text-white text-sm fw-semibold mt-3"
+                                data-aos-delay="200" data-aos="fade" data-aos-duration="3000">
+                                Order
+                            </a>
                         </div>
                     </div>
                 @endforeach

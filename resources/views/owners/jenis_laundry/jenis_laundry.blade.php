@@ -137,7 +137,7 @@
                     {
                         data: 'id',
                         render: function(data, type, row) {
-                            return `<button class='btn btn-sm btn-info' onclick='editData("${row.nama}")'>Edit</button>
+                            return `<button class='btn btn-sm btn-info' onclick='editData("${data}")'>Edit</button>
                                     <button class='btn btn-sm btn-danger' onclick='hapusData("${data}")'>Hapus</button>`;
                         }
                     }
@@ -145,12 +145,14 @@
             });
         });
 
-        function editData(nama) {
+        function editData(id) {
             let table = $('#jenisLaundryTable').DataTable();
-            let data = table.data().toArray().find(row => row.nama === nama);
+            let data = table.data().toArray().find(row => String(row.id) === String(id));
             if (data) {
                 $('#nama').val(data.nama);
                 $('#harga').val(data.harga);
+                $('#deskripsi').val(data.deskripsi);
+                $('#foto').next('.custom-file-label').html(data.foto);
                 $('#waktu').val(data.waktu);
                 $('#berat').val(data.berat);
                 $('#id').val(data.id);

@@ -30,7 +30,6 @@
                                 <th scope="col">Berat</th>
                                 <th scope="col">Harga</th>
                                 <th scope="col">Status</th>
-                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -76,14 +75,6 @@
                                     <td>${item.berat}</td>
                                     <td>${item.harga}</td>
                                     <td>${item.status_cucian}</td>
-                                    <td>
-                                        <form action="" method="POST" class="d-flex align-items-center">
-                                            <input type="hidden" name="_token" value="">
-                                            <input type="text" name="contact_number" placeholder="Nomor kontak"
-                                                class="form-control me-2" style="width: 300px;" required>
-                                            <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-                                        </form>
-                                    </td>
                                 </tr>
                             `;
                             });

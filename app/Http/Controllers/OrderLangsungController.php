@@ -17,7 +17,10 @@ class OrderLangsungController extends Controller
     public function orderLangsung()
     {
         $jenisLaundry = JenisLaundry::all();
-        $orderan = Orderan::with(['jenisLaundry', 'orderLocation'])->where('user_id', auth()->user()->id)->get();
+        $orderan = Orderan::with(['jenisLaundry', 'orderLocation'])
+                            ->where('user_id', auth()->user()->id)
+                            ->where('is_paket', '0')
+                            ->get();
         return view('members.order_langsung.order_langsung', compact('jenisLaundry', 'orderan'));
     }
 
@@ -36,6 +39,7 @@ class OrderLangsungController extends Controller
                 'status'           => 'Belum Lunas',
                 'status_cucian'    => 'Orderan Masuk',
                 'is_offline'       => '0',
+                'is_paket'         => '0'
             ]);
 
             return redirect()->back()->with('success', 'Order berhasil dibuat.');
@@ -97,7 +101,7 @@ class OrderLangsungController extends Controller
 
     public function setLocation($id)
     {
-        return view('members.set_location', compact('id'));
+        return view('members.order_langsung.set_location', compact('id'));
     }
 
     public function search(Request $request)

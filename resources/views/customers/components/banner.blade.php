@@ -24,7 +24,7 @@
                             </p>
                             <div
                                 class="mt-4 pt-3 d-flex align-items-center justify-content-center justify-content-xl-start column-gap-3">
-                                <a href="javascript:;" class="btn btn-lg btn-primary text-white text-sm fw-semibold"
+                                <a href="/registerCustomer" class="btn btn-lg btn-primary text-white text-sm fw-semibold"
                                     data-aos-delay="200" data-aos="fade" data-aos-duration="3000">
                                     Daftar Member
                                 </a>

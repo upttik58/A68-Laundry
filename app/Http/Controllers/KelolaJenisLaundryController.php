@@ -63,10 +63,19 @@ class KelolaJenisLaundryController extends Controller
             'nama' => 'required',
             'harga' => 'required',
             'waktu' => 'required',
-            'berat' => 'required'
+            'berat' => 'required',
+            'deskripsi' => 'required',
+            'foto' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         try {
+            if ($request->hasFile('foto')) {
+                $image = $request->file('foto');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $image->move($_SERVER['DOCUMENT_ROOT'] . '/images', $imageName);
+                $validated['foto'] = $imageName;
+            }
+
             JenisLaundry::where('id', $id)->update($validated);
             return redirect('/jenisLaundry')->with('success', 'Data berhasil diubah');
         } catch (\Exception $e) {

@@ -30,9 +30,9 @@
                             <h3 class="m-0 mt-1 text-primary-emphasis text-2xl leading-6 fw-bold">
                                 Rp. {{ $pl->harga }} / {{ $pl->berat }}KG
                             </h3>
-                            <a href="javascript:;" class="btn btn-lg btn-primary text-white text-sm fw-semibold mt-3"
+                            <a href="/paketLaundryMember" class="btn btn-lg btn-primary text-white text-sm fw-semibold mt-3"
                                 data-aos-delay="200" data-aos="fade" data-aos-duration="3000">
-                                Daftar Member
+                                Daftar Paket
                             </a>
                         </div>
                     </div>
